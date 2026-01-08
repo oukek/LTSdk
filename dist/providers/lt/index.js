@@ -19,6 +19,9 @@ const client_1 = require("./client");
 const aigc_1 = require("./api/aigc");
 const synthesis_1 = require("./api/synthesis");
 const job_1 = require("./api/job");
+/**
+ * LTProvider 类，提供对 AIGC、效果合成和任务管理服务的访问
+ */
 class LTProvider {
     constructor(config) {
         this.client = new client_1.LTHttpClient(config);

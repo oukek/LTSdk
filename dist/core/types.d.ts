@@ -28,11 +28,18 @@ export type JobStatus = 'waiting' | 'executing' | 'succeed' | 'failed' | 'cancel
  * 任务查询响应
  */
 export interface IJobResult {
+    /** 任务状态 */
     status: JobStatus;
+    /** 错误信息 (生成失败时才会有值) */
     message?: string;
+    /** 生成的结果文件地址列表 */
     urls?: string[];
+    /** 结果文件格式列表 */
     formats?: string[];
+    /** 生成的文本内容 (如图生文、标题提取结果) */
     text?: string;
+    /** 生成的结果文件地址 (兼容单数形式) */
     url?: string;
+    /** 结果文件格式 (兼容单数形式) */
     format?: string;
 }

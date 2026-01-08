@@ -1,0 +1,473 @@
+效果合成接口对接（APP类）
+总体流程
+  - 灵图开放相应的AIGC接口，调用方根据《开放API对接方案》调用相关的接口实现相应的业务。
+  - 接口采用异步的方式，调用方提交相关的生成任务后，灵图后台开始执行任务，调用方可通过查询接口获取任务结果。
+暂时无法在飞书文档外展示此内容
+提交生成任务
+商品图换背景
+  - 描述：根据商品图片和背景图，自动替换商品背景。
+  - 接口地址：/aigc/synthesis/change-background
+  - 请求方法：POST
+  - 请求体（request body）
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+requestId
+
+请求ID
+string
+是
+100
+调用方请求的ID，需保证唯一，相同的ID将返回相同的结果。(备注：非签名校验的salt值)
+width
+
+宽度
+int
+
+是
+
+400~1280
+
+结果图宽度
+
+height
+高度
+int
+是
+400～1280
+结果图高度
+goods
+商品图信息
+
+Object
+
+是
+
+字段定义见下方"商品图信息结构体"
+background
+背景图信息
+Object
+是
+
+字段定义见下方"背景图信息结构体"
+productSmartColor
+商品是否智能调色
+boolean
+否
+
+默认：是
+referenceStrong
+背景是否强参考
+boolean
+否
+
+默认：是
+num
+生图数量
+number
+否
+
+生图数量，默认1，可选值：
+1，2，4
+  商品图信息结构体：
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+url
+
+商品图地址
+
+string
+是
+
+图片url地址：
+  - 只有商品的透明背景图，如果不是纯商品图可先使用抠图接口处理
+  - 需裁剪成只包含商品的最小图片
+  - 请保证url公网可访问
+x
+
+x轴偏移量
+int
+
+是
+
+
+相对于画布左上角的x轴偏移量
+
+y
+y轴偏移量
+int
+是
+
+相对于画布左上角的y轴偏移量
+width
+宽度
+
+int
+
+是
+
+商品在画布中的宽度，可能与实际的商品图片宽度不一致。
+height
+高度
+int
+是
+
+商品在画布中的高度，可能与实际的商品图片宽度不一致。
+  背景图信息结构体：
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+bgId
+背景ID
+string
+否
+
+
+背景ID，通过《查询商品图换背景列表》接口获取的背景ID
+url
+
+背景图地址
+
+string
+是
+
+图片url地址，请保证url公网可访问，图片大小需与结果图的宽高保持一致。
+mask
+
+不需要参考的区域蒙层
+string
+
+否
+
+
+图片url地址，请保证url公网可访问，图片大小需与结果图的宽高保持一致，不需要参考的区域用白色表示，其他区域用黑色表示。
+  
+示例：
+{
+    "requestId": "xxxxx",
+    "width": 1024,
+    "height": 1024,
+    "goods": {
+        "url": "https://aiad-prod.oss-cn-heyuan.aliyuncs.com/1/8076719832378114048/4617955318885779505/eb6aefcf64e14abf81c678fdeefe792b.png",
+        "x": 223,
+        "y": 269,
+        "width": 614,
+        "height": 609
+    },
+    "background": {
+        "url": "https://aiad-prod.oss-cn-heyuan.aliyuncs.com/1/8076719832378114048/4617955318885779505/b04deb391450478d95b3feabbe1d5415.png",
+        "mask": "https://aiad-prod.oss-cn-heyuan.aliyuncs.com/1/8076719832378114048/4617955318885779505/cfe43d5df4124a6089ba32144ab27eec.png"
+    },
+    "productSmartColor": true,
+    "referenceStrong": true
+        
+}
+  - 响应体（response body）
+参数名称 
+类型
+参数说明 
+无
+string
+任务jobId，用于查询任务结果
+AI模特
+  - 描述：根据服饰图、模特图片和背景图，自动替换模特和背景
+  - 接口地址：/aigc/synthesis/model
+  - 请求方法：POST
+  - 请求体（request body）
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+requestId
+
+请求ID
+string
+是
+100
+调用方请求的ID，需保证唯一，相同的ID将返回相同的结果。(备注：非签名校验的salt值)
+model
+模特服饰图
+
+string
+
+是
+
+模特服饰图片地址：
+  - 真人模特服饰图
+  - 请保证url公网可访问
+faceId
+模特脸ID
+string
+是
+
+通过《获取模特脸》接口获取的模特ID
+background
+背景图
+
+string
+
+否
+
+
+背景图片地址：
+  - 没有输入的情况下保持原模特服饰图的背景
+  - 请保证url公网可访问
+num
+生图数量
+number
+否
+
+生图数量，默认1，可选值：
+1，2，4
+- 响应体（response body）
+参数名称 
+类型
+参数说明 
+无
+string
+任务jobId，用于查询任务结果
+AI试衣
+- 描述：根据服饰图、模特图片和背景图，自动替换模特和背景
+- 接口地址：/aigc/synthesis/dress
+- 请求方法：POST
+- 请求体（request body）
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+requestId
+
+请求ID
+string
+是
+100
+调用方请求的ID，需保证唯一，相同的ID将返回相同的结果。(备注：非签名校验的salt值)
+model
+模特图
+
+string
+
+是
+
+模特图片地址：
+  - 模特正面图，建议上传简单背景的模特图
+  - 请保证url公网可访问
+dresses
+
+服饰图
+
+Object数组
+
+是
+
+
+服饰图信息，字段定义见下方"服饰图信息结构体"
+num
+生图数量
+number
+否
+
+生图数量，默认1，可选值：
+1，2，4
+服饰图信息结构体
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+image
+服饰图地址
+
+string
+是
+
+图片url地址，请保证url公网可访问
+type
+
+服饰类型
+string
+
+是
+
+
+服饰类型，可选值：
+- dresses  （连体衣）
+- upperBody （上装）
+- lowerBody （下装）
+- 响应体（response body）
+参数名称 
+类型
+参数说明 
+无
+string
+任务jobId，用于查询任务结果
+查询任务结果
+  - 描述：根据任务ID，查询任务结果。
+  - 接口地址：/aigc/job/result
+  - 请求方法：POST
+  - 请求体（request body）
+参数名称 
+类型
+ 是否必填
+参数说明 
+jobId
+string
+是
+提交任务时返回的任务ID
+  - 响应体（response body）
+参数名称 
+类型
+参数说明 
+status
+字符串
+任务状态，包含以下状态
+  - waiting：等待执行
+  - executing：执行中
+  - succeed：生成成功
+  - failed：生成失败
+  - Canceled: 已取消
+message
+错误信息
+失败原因（生成失败时才会有值）。
+url
+string
+结果文件地址，多张图用“,”分割，有效期12小时，请及时另行保存。
+text
+string
+结果文本
+format
+string
+文件格式
+取消任务
+  - 描述：取消已提交的任务，只有任务处于waiting状态才能取消。
+  - 接口地址：/aigc/job/cancel
+  - 请求方法：POST
+  - 请求体（request body）
+参数名称 
+类型
+ 是否必填
+参数说明 
+jobId
+string
+是
+提交任务时返回的任务ID
+reason
+string
+否
+取消原因
+  - 响应体（response body）
+参数名称 
+类型
+参数说明 
+success
+boolean
+是否成功，成功返回true，失败返回false
+message
+错误信息
+失败原因（取消失败时才会有值）。
+查询商品图换背景列表
+- 描述：查询商品图换背景使用的背景列表。
+- 接口地址：/aigc/synthesis/change-background/bgs
+- 请求方法：GET
+- 请求体（request body）
+无
+- 响应体（response body）
+参数名称 
+类型
+参数说明 
+bgs
+背景列表
+数组，字段定义见下方"背景信息结构体"
+  背景信息结构体：
+参数
+参数名称
+类型
+参数说明 
+id
+
+ID
+string
+ID，用于商品图换背景接口使用
+category
+分类
+string
+- indoor  （室内）
+- outdoor （室外）
+- simplicity （简约）
+image
+背景图
+string
+背景图地址
+查询模特脸列表
+- 描述：根据AI模特中的模特脸列表。
+- 接口地址：/aigc/synthesis/model/faces
+- 请求方法：GET
+- 请求体（request body）
+无
+- 响应体（response body）
+参数名称 
+类型
+参数说明 
+faces
+模特图脸列表
+数组，字段定义见下方"模特脸信息结构体"
+  模特脸信息结构体：
+参数
+参数名称
+类型
+参数说明 
+id
+
+ID
+string
+ID，用于AI模特接口使用
+gender
+性别
+string
+- Male  （男）
+- female （女）
+skin
+皮肤颜色
+string
+- yellow （黄色）
+- white （白色）
+- black （黑色）
+age
+年龄段
+string
+- adult （成人）
+- child （儿童）
+preview
+预览图
+string
+预览图
+常见错误码
+code
+message
+401
+签名校验失败
+800000
+剩余生成次数不足
+800001
+文本不能为空或长度过长
+800002
+图片不能为空或无法访问
+800003
+风格错误
+800004
+宽高比错误

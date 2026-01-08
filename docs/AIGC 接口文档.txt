@@ -1,0 +1,1354 @@
+AIGC接口对接（APP类）
+总体流程
+  - 灵图开放相应的AIGC接口，调用方根据《开放API对接方案》调用相关的接口实现相应的业务。
+  - 接口采用异步的方式，调用方提交相关的生成任务后，灵图后台开始执行任务，调用方可通过查询接口获取任务结果。
+暂时无法在飞书文档外展示此内容
+提交生成任务
+文生图
+  - 描述：根据文本描述词，生成图片，一次生成一张。
+  - 接口地址：/aigc/text2img
+  - 请求方法：POST
+  - 请求体（request body）
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+requestId
+请求ID
+string
+是
+100
+调用方请求的ID，需保证唯一，相同的ID将返回相同的结果。(备注：非签名校验的salt值)
+style
+
+风格
+string
+否
+
+风格对应的code，默认：通用，可选值：
+- 通用：common
+- 绘本：pictureBook
+- 插画：illustration
+- 动漫：anime
+- 游戏：game
+- 写实：photo
+- 3D：3D
+- 电商：eCommerce
+- Logo：logo
+prompt
+提示词
+string
+是
+1000
+文本提示词
+ar
+
+结果图宽高比
+string
+
+否
+
+默认1:1，可选值：
+- 1:1
+- 2:3
+- 3:2
+- 3:4
+- 4:3
+- 9:16
+- 16:9
+num
+生图数量
+number
+否
+
+生图数量，默认1，可选值：
+1，2，4
+  - 响应体（response body）
+参数名称 
+类型
+参数说明 
+无
+string
+任务jobId，用于查询任务结果
+文生图进阶版
+  - 描述：根据文本描述词，生成更具艺术性的图片，一次生成4张。
+  - 接口地址：/aigc/text2imgPro
+  - 请求方法：POST
+  - 请求体（request body）
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+requestId
+请求ID
+string
+是
+100
+调用方请求的ID，需保证唯一，相同的ID将返回相同的结果。(备注：非签名校验的salt值)
+prompt
+提示词
+string
+是
+200
+文本提示词
+ar
+
+结果图宽高比
+string
+
+否
+
+默认1:1，可选值：
+- 1:1
+- 2:3
+- 3:2
+- 3:4
+- 4:3
+- 9:16
+- 16:9
+  - 响应体（response body）
+参数名称 
+类型
+参数说明 
+无
+string
+任务jobId，用于查询任务结果
+图生图
+  - 描述：根据文本描述词和参考图，生成图片，一次生成一张。
+  - 接口地址：/aigc/img2img
+  - 请求方法：POST
+  - 请求体（request body）
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+requestId
+请求ID
+string
+是
+100
+调用方请求的ID，需保证唯一，相同的ID将返回相同的结果。
+style
+
+风格
+string
+
+否
+
+风格对应的code，默认：通用，可选值：
+- 通用：common
+- 绘本：pictureBook
+- 插画：illustration
+- 动漫：anime
+- 游戏：game
+- 写实：photo
+- 3D：3D
+- 电商：eCommerce
+- Logo：logo
+prompt
+提示词
+string
+是
+200
+文本提示词
+crefImages
+
+形象参考图片
+array
+是
+4
+形象参考图片url，最多可传4张，请保证url公网可访问
+支持的格式:png/jpg/webp
+  尺寸限制：不能超过4096*4096
+大小限制：不超过10M
+crefImageWeight
+形象参考图片权重
+float
+否
+1
+0～1之间的浮点数，默认0.5
+ar
+
+结果图宽高比
+string
+
+否
+
+
+默认1:1，可选值：
+- 1:1
+- 2:3
+- 3:2
+- 3:4
+- 4:3
+- 9:16
+- 16:9
+
+
+num
+生图数量
+number
+否
+
+生图数量，默认1，可选值：
+1，2，4
+  - 响应体（response body）
+参数名称 
+类型
+参数说明 
+无
+string
+任务jobId，用于查询任务结果
+无缝拼接图生成
+  - 描述：根据文本描述词，生成可无缝拼接的图片，一次生成一张。
+  - 接口地址：/aigc/seamless
+  - 请求方法：POST
+  - 请求体（request body）
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+requestId
+请求ID
+string
+是
+100
+调用方请求的ID，需保证唯一，相同的ID将返回相同的结果。(备注：非签名校验的salt值)
+style
+
+风格
+
+string
+否
+
+风格对应的code，默认：通用，可选值：
+- 通用：common
+- 绘本：pictureBook
+- 插画：illustration
+- 动漫：anime
+- 游戏：game
+- 写实：photo
+- 3D：3D
+- 电商：eCommerce
+- Logo：logo
+prompt
+提示词
+string
+是
+200
+文本提示词
+ar
+
+结果图宽高比
+string
+
+否
+
+默认1:1，可选值：
+- 1:1
+num
+生图数量
+number
+否
+
+生图数量，默认1，可选值：
+1，2，4
+  - 响应体（response body）
+参数名称 
+类型
+参数说明 
+无
+string
+任务jobId，用于查询任务结果
+免抠素材生成
+  - 描述：根据文本描述词，生成透明背景的素材图片。
+  - 接口地址：/aigc/transparent
+  - 请求方法：POST
+  - 请求体（request body）
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+requestId
+请求ID
+string
+是
+100
+调用方请求的ID，需保证唯一，相同的ID将返回相同的结果。(备注：非签名校验的salt值)
+style
+
+风格
+
+string
+否
+
+风格对应的code，默认：通用，可选值：
+- 通用：common
+- 绘本：pictureBook
+- 插画：illustration
+- 动漫：anime
+- 游戏：game
+- 写实：photo
+- 3D：3D
+- 电商：eCommerce
+- Logo：logo
+prompt
+提示词
+string
+是
+200
+文本提示词
+ar
+
+结果图宽高比
+string
+
+否
+
+默认1:1，可选值：
+- 1:1
+num
+生图数量
+number
+否
+
+生图数量，默认1，可选值：
+1，2，4
+  - 响应体（response body）
+参数名称 
+类型
+参数说明 
+无
+string
+任务jobId，用于查询任务结果
+图生文
+  - 描述：根据图片提取提示词
+  - 接口地址：/aigc/img2text
+  - 请求方法：POST
+  - 请求体（request body）
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+requestId
+请求ID
+string
+是
+100
+调用方请求的ID，需保证唯一，相同的ID将返回相同的结果。
+image
+图片
+string
+是
+100
+图片url地址，请保证url公网可访问
+支持的格式:png/jpg/webp
+  尺寸限制：不能超过4096*4096
+大小限制：不超过10M
+  - 响应体（response body）
+参数名称 
+类型
+参数说明 
+无
+string
+任务jobId，用于查询任务结果
+商品图提取标题
+  - 描述：商品图提取标题
+  - 接口地址：/aigc/title
+  - 请求方法：POST
+  - 请求体（request body）
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+requestId
+请求ID
+string
+是
+100
+调用方请求的ID，需保证唯一，相同的ID将返回相同的结果。
+image
+
+图片
+string
+是
+100
+图片url地址，请保证url公网可访问
+支持的格式:png/jpg/webp
+  尺寸限制：不能超过4096*4096
+大小限制：不超过10M
+prompt
+标题规则
+string
+否
+
+自定义生成标题的规则
+  - 响应体（response body）
+参数名称 
+类型
+参数说明 
+无
+string
+任务jobId，用于查询任务结果
+抠图
+  - 描述：智能抠图
+  - 接口地址：/aigc/matting
+  - 请求方法：POST
+  - 请求体（request body）
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+requestId
+请求ID
+string
+是
+100
+调用方请求的ID，需保证唯一，相同的ID将返回相同的结果。
+image
+图片
+string
+是
+100
+图片url地址，请保证url公网可访问。
+支持的格式:png/jpg/webp
+  尺寸限制：不能超过4096*4096
+大小限制：不超过10M
+type
+类型
+number
+否
+
+抠图类型，默认普通，取值范围：
+0: 普通
+1:  扣头
+formats
+
+格式
+
+数组
+否
+
+2
+结果文件格式，字符串数组，支持同时输出不同格式的文件。可选值：
+png
+psd
+
+  - 响应体（response body）
+参数名称 
+类型
+参数说明 
+无
+string
+任务jobId，用于查询任务结果
+线稿提取
+  - 描述：上传图片，自动提取线稿
+  - 接口地址：/aigc/lineart
+  - 请求方法：POST
+  - 请求体（request body）
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+requestId
+请求ID
+string
+是
+100
+调用方请求的ID，需保证唯一，相同的ID将返回相同的结果。
+image
+图片
+string
+是
+100
+图片url地址，请保证url公网可访问
+支持的格式:png/jpg/webp
+  尺寸限制：不能超过4096*4096
+大小限制：不超过10M
+prompt
+提示词
+string
+否
+200
+文本提示词
+  - 响应体（response body）
+参数名称 
+类型
+参数说明 
+无
+string
+任务jobId，用于查询任务结果
+无损放大
+  - 描述：无损放大
+  - 接口地址：/aigc/upscale
+  - 请求方法：POST
+  - 请求体（request body）
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+requestId
+请求ID
+string
+是
+100
+调用方请求的ID，需保证唯一，相同的ID将返回相同的结果。
+image
+  
+图片
+string
+是
+100
+图片url地址，请保证url公网可访问。
+支持的格式:png/jpg/webp
+尺寸限制：宽或高不能超过2048
+大小限制：不超过10M
+type
+类型
+string
+否
+1
+类型，默认“0”，可选值：
+“0”: “超分放大”
+“1”: “ 变清晰”
+multiple
+倍数/分辨率
+int
+否
+4
+
+取值：1，2，4，默认2；
+  - 类型为“超分放大“时，代表放大倍数；
+  - 类型为“变清晰”时，代表输出图的分辨率：1K、2K、4K
+denoise
+是否降噪
+boolean
+否
+
+默认：否
+  - 响应体（response body）
+参数名称 
+类型
+参数说明 
+无
+string
+任务jobId，用于查询任务结果
+智能擦除
+  - 描述：智能擦除
+  - 接口地址：/aigc/remove
+  - 请求方法：POST
+  - 请求体（request body）
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+requestId
+请求ID
+string
+是
+100
+调用方请求的ID，需保证唯一，相同的ID将返回相同的结果。
+image
+  
+图片
+string
+是
+100
+图片url地址，请保证url公网可访问。
+支持的格式:png/jpg/webp
+尺寸限制：宽或高不能超过4096
+大小限制：不超过10M
+mask
+
+需要擦除的区域蒙层
+string
+
+是
+100
+
+图片url地址，请保证url公网可访问，图片大小需与原始图的宽高保持一致，需要擦除的区域用白色表示，其他区域用黑色表示。
+  示例：
+{
+    "requestId": "xxxxx",
+    "image": "https://aiad-prod.oss-cn-heyuan.aliyuncs.com/1/8076719832378114048/4617955318885779505/4337296c7bf24ad39234b691dcb9853f.png",
+    "mask": "https://aiad-prod.oss-cn-heyuan.aliyuncs.com/1/8076719832378114048/4617955318885779505/de2c0cb8dc924ae6beeffccd9661e5ba.png"        
+}
+  - 响应体（response body）
+参数名称 
+类型
+参数说明 
+无
+string
+任务jobId，用于查询任务结果
+转矢量图
+  - 描述：位图转矢量图
+  - 接口地址：/aigc/vector
+  - 请求方法：POST
+  - 请求体（request body）
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+requestId
+请求ID
+string
+是
+100
+调用方请求的ID，需保证唯一，相同的ID将返回相同的结果。
+image
+  
+图片
+string
+是
+100
+图片url地址，请保证url公网可访问。
+支持的格式:png/jpg/webp
+尺寸限制：宽或高不能超过4096
+大小限制：不超过10M
+formats
+
+格式
+
+数组
+否
+
+2
+
+结果文件格式，字符串数组，支持同时输出不同格式的文件，默认svg格式。可选值：
+1. svg
+2. eps
+
+  - 响应体（response body）
+参数名称 
+类型
+参数说明 
+无
+string
+任务jobId，用于查询任务结果
+相似图裂变
+  - 描述：根据图片，生成相似图片。
+  - 接口地址：/aigc/reimage
+  - 请求方法：POST
+  - 请求体（request body）
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+requestId
+请求ID
+string
+是
+100
+调用方请求的ID，需保证唯一，相同的ID将返回相同的结果。(备注：非签名校验的salt值)
+image
+图片
+string
+是
+100
+图片url地址，请保证url公网可访问
+支持的格式:png/jpg/webp
+  尺寸限制：不能超过4096*4096
+大小限制：不超过10M
+imageWeight
+图片权重
+float
+是
+1
+0～1之间的浮点数，默认0.5
+seamless
+是否无缝拼接图
+boolean
+否
+
+生成的结果是否是无缝拼接图，要求输入的图片是基本可无缝拼接的图。
+prompt
+提示词
+string
+否
+200
+画面微调提示词
+ar
+
+结果图宽高比
+string
+
+否
+
+
+默认1:1，可选值：
+- 1:1
+- 2:3
+- 3:2
+- 3:4
+- 4:3
+- 9:16
+- 16:9
+num
+生图数量
+number
+否
+
+生图数量，默认1，可选值：
+1，2，4
+  - 响应体（response body）
+参数名称 
+类型
+参数说明 
+无
+string
+任务jobId，用于查询任务结果
+相似图裂变进阶版
+  - 描述：根据图片，生成高质量的相似图片，一次生成4张。
+  - 接口地址：/aigc/reimage/pro
+  - 请求方法：POST
+  - 请求体（request body）
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+requestId
+请求ID
+string
+是
+100
+调用方请求的ID，需保证唯一，相同的ID将返回相同的结果。(备注：非签名校验的salt值)
+type
+生成模式
+string
+否
+1
+生成模式，默认0，
+0：艺术设计（生成的图片更具艺术感）
+1：文字强化（更精准的识别图片中的文字。）
+image
+
+图片
+string
+是
+100
+图片url地址，请保证url公网可访问
+支持的格式:png/jpg/webp
+  尺寸限制：不能超过4096*4096
+大小限制：不超过10M
+similarity
+相似度
+float
+是
+1
+0～1之间的浮点数，默认0.75，仅“艺术设计”模式有效
+onlyPattern
+仅裂变图案
+boolean
+否
+
+
+仅裂变图片中的图案信息，默认false。
+circle
+圆形图案
+boolean
+否
+
+裂变的结果是圆形图案，默认false
+bgColor
+背景颜色
+int
+否
+
+指定结果图的背景颜色,默认不指定，可选值：
+0: 不指定
+1:  黑色
+2:  白色
+ar
+  
+结果图宽高比
+string
+
+否
+
+
+默认1:1，可选值：
+- 1:1
+- 2:3
+- 3:2
+- 3:4
+- 4:3
+- 9:16
+- 16:9
+num
+生图数量
+number
+否
+
+生图数量，默认4，可选值：
+2，4
+  - 响应体（response body）
+参数名称 
+类型
+参数说明 
+无
+string
+任务jobId，用于查询任务结果
+商品图换背景
+  - 描述：根据商品图片和背景图，自动替换商品背景。
+  - 接口地址：/aigc/change-background
+  - 请求方法：POST
+  - 请求体（request body）
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+requestId
+
+请求ID
+string
+是
+100
+调用方请求的ID，需保证唯一，相同的ID将返回相同的结果。(备注：非签名校验的salt值)
+width
+
+宽度
+int
+
+是
+400~1280
+
+结果图宽度
+height
+高度
+int
+是
+400～1280
+结果图高度
+goods
+商品图信息
+
+Object
+
+是
+
+字段定义见下方"商品图信息结构体"
+background
+背景图信息
+Object
+是
+
+字段定义见下方"背景图信息结构体"
+productSmartColor
+商品是否智能调色
+boolean
+否
+
+默认：是
+referenceStrong
+背景是否强参考
+boolean
+否
+
+默认：是
+num
+生图数量
+number
+否
+
+生图数量，默认1，可选值：
+1，2，4
+  商品图信息结构体：
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+url
+
+商品图地址
+
+string
+是
+
+图片url地址：
+  - 只有商品的透明背景图，如果不是纯商品图可先使用抠图接口处理
+  - 需裁剪成只包含商品的最小图片
+  - 请保证url公网可访问
+  - 支持的格式:png/jpg/webp
+  - 大小限制：不超过10M
+x
+
+x轴偏移量
+int
+
+是
+
+
+相对于画布左上角的x轴偏移量
+
+y
+y轴偏移量
+int
+是
+
+相对于画布左上角的y轴偏移量
+width
+宽度
+
+int
+
+是
+
+商品在画布中的宽度，可能与实际的商品图片宽度不一致。
+height
+高度
+int
+是
+
+商品在画布中的高度，可能与实际的商品图片宽度不一致。
+  背景图信息结构体：
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+url
+
+背景图地址
+
+string
+是
+
+- 图片url地址，请保证url公网可访问，图片大小需与结果图的宽高保持一致。
+- 支持的格式:png/jpg/webp
+- 大小限制：不超过10M
+mask
+
+不需要参考的区域蒙层
+string
+
+否
+
+
+- 图片url地址，请保证url公网可访问，图片大小需与结果图的宽高保持一致，不需要参考的区域用白色表示，其他区域用黑色表示。
+- 支持的格式:png/jpg/webp
+- 大小限制：不超过10M
+示例：
+{
+    "requestId": "xxxxx",
+    "width": 1024,
+    "height": 1024,
+    "goods": {
+        "url": "https://aiad-prod.oss-cn-heyuan.aliyuncs.com/1/8076719832378114048/4617955318885779505/eb6aefcf64e14abf81c678fdeefe792b.png",
+        "x": 223,
+        "y": 269,
+        "width": 614,
+        "height": 609
+    },
+    "background": {
+        "url": "https://aiad-prod.oss-cn-heyuan.aliyuncs.com/1/8076719832378114048/4617955318885779505/b04deb391450478d95b3feabbe1d5415.png",
+        "mask": "https://aiad-prod.oss-cn-heyuan.aliyuncs.com/1/8076719832378114048/4617955318885779505/cfe43d5df4124a6089ba32144ab27eec.png"
+    },
+    "productSmartColor": true,
+    "referenceStrong": true
+        
+}
+  - 响应体（response body）
+参数名称 
+类型
+参数说明 
+无
+string
+任务jobId，用于查询任务结果
+艺术字生成
+- 描述：根据描述词，生成带有艺术字（英文）的图片。
+- 接口地址：/aigc/art-word
+- 请求方法：POST
+- 请求体（request body）
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+requestId
+请求ID
+string
+是
+100
+调用方请求的ID，需保证唯一，相同的ID将返回相同的结果。(备注：非签名校验的salt值)
+prompt
+提示词
+string
+是
+200
+文本提示词，英文提示词效果更好
+ar
+
+结果图宽高比
+string
+
+否
+
+默认1:1，可选值：
+- 1:1
+- 2:3
+- 3:2
+- 3:4
+- 4:3
+- 9:16
+- 16:9
+num
+生图数量
+number
+否
+
+生图数量，默认4，可选值：
+1，2，4
+- 响应体（response body）
+参数名称 
+类型
+参数说明 
+无
+string
+任务jobId，用于查询任务结果
+风格转绘（仅限算力专用模式，具体商务沟通）
+- 描述：输入图片，选择风格，一键转换。
+- 接口地址：/aigc/style-transfer
+- 请求方法：POST
+- 请求体（request body）
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+requestId
+请求ID
+
+string
+是
+100
+
+调用方请求的ID，需保证唯一，相同的ID将返回相同的结果。(备注：非签名校验的salt值)
+type
+类型
+int
+是
+1
+
+类型，可选值：
+  1. 宠物
+  2. 肖像
+style
+
+风格
+
+string
+是
+
+
+风格对应的code
+动物转绘风格列表
+image
+图片
+string
+是
+100
+
+图片url地址，请保证url公网可访问。
+支持的格式:png/jpg/webp
+  尺寸限制：不能超过4096*4096
+大小限制：不超过10M
+returnMask
+是否返回mask图片
+boolean
+否
+
+是否返回转绘后的mask图
+  - 默认false
+  - 如果传true，则任务返回值中返回两张图片，第一张为转绘结果，第二张为mask图
+
+- 响应体（response body）
+参数名称 
+类型
+参数说明 
+无
+string
+任务ID
+图案裁剪
+- 描述：自动识别T-shirt上的印花图案，并裁剪下来。
+- 接口地址：/aigc/detect
+- 请求方法：POST
+- 请求体（request body）
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+requestId
+请求ID
+
+string
+是
+100
+
+调用方请求的ID，需保证唯一，相同的ID将返回相同的结果。(备注：非签名校验的salt值)
+image
+图片
+string
+是
+100
+图片url地址，请保证url公网可访问。
+支持的格式:png/jpg/webp
+  尺寸限制：不能超过4096*4096
+大小限制：不超过10M
+- 响应体（response body）
+参数名称 
+类型
+参数说明 
+无
+string
+任务ID
+四方连续图生成
+- 描述：根据文本描述词或图片，生成可无缝拼接的图片，一次生成一张。
+- 接口地址：/aigc/seamless/pro
+- 请求方法：POST
+- 请求体（request body）
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+requestId
+请求ID
+string
+是
+100
+调用方请求的ID，需保证唯一，相同的ID将返回相同的结果。(备注：非签名校验的salt值)
+type
+生图模式
+int
+是
+
+生图模式，可选值：
+0: 文生图
+1:  相似裂变
+2:  原图连续
+3:  二方连续
+prompt
+提示词
+string
+是
+200
+文本提示词，非文生图模式不要传。
+image
+图片
+string
+是
+100
+图片url地址，请保证url公网可访问。
+支持的格式:png/jpg/webp
+  尺寸限制：不能超过4096*4096
+大小限制：不超过10M
+文生图模式不要传
+ar
+
+结果图宽高比
+string
+
+否
+
+二方连续图有效，默认1:1，可选值：
+- 自定义（宽:高）
+- 1:1
+- 2:3
+- 3:2
+- 3:4
+- 4:3
+- 9:16
+- 16:9
+- 响应体（response body）
+参数名称 
+类型
+参数说明 
+无
+string
+任务jobId，用于查询任务结果
+扩图
+- 描述：AI自动扩图
+- 接口地址：/aigc/expand
+- 请求方法：POST
+- 请求体（request body）
+参数
+参数名称
+类型
+ 是否必填
+最大长度
+参数说明 
+requestId
+请求ID
+string
+是
+100
+调用方请求的ID，需保证唯一，相同的ID将返回相同的结果。(备注：非签名校验的salt值)
+type
+扩模式
+
+int
+是
+
+生图模式，可选值：
+1: 按原图倍数
+2: 按比例
+image
+图片
+string
+是
+100
+图片url地址，请保证url公网可访问。
+支持的格式:png/jpg/webp
+  尺寸限制：不能超过4096*4096
+大小限制：不超过10M
+scale
+扩图倍数
+float
+否
+
+按原图倍数时有效，必须大于1，填写扩图结果相对原图的倍数，例如扩20%，则输入“1.2”。
+ar
+
+结果图宽高比
+string
+
+否
+
+
+按比例扩图时有效，可选值
+- 自定义（宽:高）
+- 1:1
+- 2:3
+- 3:2
+- 3:4
+- 4:3
+- 9:16
+- 16:9
+- 响应体（response body）
+参数名称 
+类型
+参数说明 
+无
+string
+任务jobId，用于查询任务结果
+查询任务结果
+  - 描述：根据任务ID，查询任务结果。
+  - 接口地址：/aigc/job/result
+  - 请求方法：POST
+  - 请求体（request body）
+参数名称 
+类型
+ 是否必填
+参数说明 
+jobId
+string
+是
+提交任务时返回的任务ID
+  - 响应体（response body）
+参数名称 
+类型
+参数说明 
+status
+字符串
+任务状态，包含以下状态
+  - waiting：等待执行
+  - executing：执行中
+  - succeed：生成成功
+  - failed：生成失败
+  - canceled: 已取消
+message
+错误信息
+失败原因（生成失败时才会有值）。
+urls
+数组
+结果文件地址。
+formats
+数组
+文件格式
+text
+string
+结果文本
+取消任务
+  - 描述：取消已提交的任务，只有任务处于waiting状态才能取消。
+  - 接口地址：/aigc/job/cancel
+  - 请求方法：POST
+  - 请求体（request body）
+参数名称 
+类型
+ 是否必填
+参数说明 
+jobId
+string
+是
+提交任务时返回的任务ID
+reason
+string
+否
+取消原因
+  - 响应体（response body）
+参数名称 
+类型
+参数说明 
+success
+boolean
+是否成功，成功返回true，失败返回false
+message
+错误信息
+失败原因（取消失败时才会有值）。
+常见错误码
+code
+message
+401
+签名校验失败
+800000
+剩余生成次数不足
+800001
+文本不能为空或长度过长
+800002
+图片不能为空或无法访问
+800003
+风格错误
+800004
+宽高比错误
+
+其他
+其他接口文档，详见
+效果合成业务接口文档

@@ -1,0 +1,76 @@
+开放API对接方案 
+获取 appId/secret ，请联系商务。付款后，邮件发送相关信息。
+概述
+  - 接口采用 HTTP 协议，编码格式为 UTF-8，响应数据类型为 application/json，响应数据为 JSON 格式数据
+  - 通过返回的 HTTP 状态码判断调用是否成功，2xx 代表成功； 
+  - 如果错误，返回统一的错误信息，格式如下（具体的错误码见错误码定义）： 
+{ 
+    "code": 401, 
+    "message":"签名错误" 
+} 
+签名认证算法详解 
+  客户端涉及的 签名以及请求发送的流程概述如下： 
+    - 构造请求体，将待发送的请求内容按照与 API 网关后台约定的规则组装，确保客户端签名、API 网关后台认证时使用的请求内容 一致。 
+    - 使用规范请求和其他信息创建待签字符串。 
+    - 使用 appId/secret 和待签字符串计算签名。 
+    - 将生成的签名信息作为请求消息头添加到 HTTP 请求中 
+  以下做详细介绍：
+    签名与认证首先需要规范请求内容，然后再进行签名。 
+    签名体分为5个部分 
+      1. appId
+      2. uri: 表示请求的路径，如：/api/text2img 
+      3. salt : 客户端自行生成的唯一id，如UUID，灵图服务端会限制该UUID生成的sign签名只能使用一次。 
+      4. timestamp: 表示请求的时间戳，单位秒，取当前时间。 
+      5. secret：灵图平台颁发的秘钥。
+  HTTP 请求规范伪代码如下： 
+Request = ${appId} + ${uri} + ${salt} + ${timestamp} + ${secret}
+   假设原始请求： 
+POST http://127.0.0.1:8000/api/text2img
+Header content-type=application/json
+Header appId=test 
+Header timestamp=1569564388 
+Header salt=07c169ba-5845-45ac-a1a7-de4e046748be1569564388
+Body:
+{...}
+  待签名数据为 
+test/api/text2img07c169ba-5845-45ac-a1a7-de4e046748be1569564388secret
+  签名方式使用 secret 和 待签名数据 进行 sha256 计算得到签名值 sign 字符串，放入header头 
+Header sign=029e662588643f3c7c893a8828d01e4ba7645dc9f1041e731c76f7df221e27c1
+  签名代码示例(java):
+
+import org.apache.commons.codec.digest.DigestUtils;
+
+public static void main(String[] args) {
+    String appId = "test";
+    String uri = "/api/text2img";
+    String salt = "07c169ba-5845-45ac-a1a7-de4e046748be";
+    String timestamp = "1569564388";
+    String secret = "secret";
+    // 注意顺序
+    String body = appId + uri + salt + timestamp + secret;
+    String sign = DigestUtils.sha256Hex(body);
+    System.out.println(sign);
+    
+}
+  最终请求为 
+POST http://127.0.0.1:8000/api/v1/user?a=b&c=d 
+Header content-type=application/json
+Header timestamp=1569564388 
+Header appId=test
+Header salt=07c169ba-5845-45ac-a1a7-de4e046748be
+Header sign=029e662588643f3c7c893a8828d01e4ba7645dc9f1041e731c76f7df221e27c1
+
+
+Body:
+{...}
+  签名请求注意事项 
+    - 时间戳，appId，salt，签名值 分别使用 header: timestamp、appId、salt、sign
+    - salt，必传，客户端自行保证唯一，重复的salt生成的签名再次使用时无法通过校验。 
+    - timestamp 时间戳精确到秒（10位），取值范围为当前时间前后5分钟，非法的timestamp值无法通过校验。 
+    - appId 必传，表明调用方身份，不传时无法通过校验。 
+权限认证 
+  在调灵图 API 之前需要先向灵图申请权限，申请通过之后灵图会提供 appId 和 secret，在调用灵图 API 时需要根据规则将数 据进行加密签名后再发起请求。 
+  具体流程： 
+    - 用户通过线下申请，申请通过生成 appId，secret给用户； 
+    - 任何一方发起请求时，需要将公共参数(包含签名)和业务参数一起发送给服务端; 
+    - 服务端对 appId 、salt 、timestamp、sign 等请求参数进行校验，校验通过处理请求，校验不通过返回401状态码。

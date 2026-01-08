@@ -15,6 +15,30 @@ export class LTHttpClient {
       headers: {
         'Content-Type': 'application/json',
       },
+      transformResponse: [
+        (data: any) => {
+          if (typeof data === 'string') {
+            // 简单处理：将 JSON 中的大数字转换为字符串，防止精度丢失
+            try {
+              // 1. 匹配 : 后面跟着的大数字
+              let processed = data.replace(/:\s*(-?\d{15,})/g, ': "$1"');
+              // 2. 如果整个字符串就是一个大数字（某些接口可能直接返回 ID）
+              if (/^\d{15,}$/.test(data.trim())) {
+                processed = `"${data.trim()}"`;
+              }
+              return processed;
+            } catch (e) {
+              return data;
+            }
+          }
+          return data;
+        },
+        ...(Array.isArray(axios.defaults.transformResponse) 
+          ? axios.defaults.transformResponse 
+          : axios.defaults.transformResponse 
+            ? [axios.defaults.transformResponse] 
+            : [])
+      ] as any
     });
   }
 

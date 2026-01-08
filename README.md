@@ -6,13 +6,13 @@
 ## 安装
 
 ```bash
-npm install ltsdk
+npm install @oukek/ltsdk
 ```
 
 ## 快速开始
 
 ```typescript
-import { LTSdk } from 'ltsdk';
+import { LTSdk } from '@oukek/ltsdk';
 
 const client = new LTSdk({
   appId: 'your-app-id',
